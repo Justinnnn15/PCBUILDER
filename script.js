@@ -34,8 +34,8 @@ const components = {
             // Budget
             { name: "Ryzen 5 4500", socket: "AM4", generation: "4000", tier: "budget", ramType: ["DDR4"], description: "Entry-level Ryzen, very affordable" },
             { name: "Ryzen 3 4100", socket: "AM4", generation: "4000", tier: "budget", ramType: ["DDR4"], description: "Budget quad-core for basic gaming" },
-            { name: "Ryzen 5 5600G", socket: "AM4", generation: "5000", tier: "budget", ramType: ["DDR4"], description: "APU option, popular in PH shops" },
             // Balanced
+            { name: "Ryzen 5 5600G", socket: "AM4", generation: "5000", tier: "balanced", ramType: ["DDR4"], description: "APU option, popular in PH shops" },
             { name: "Ryzen 5 5600", socket: "AM4", generation: "5000", tier: "balanced", ramType: ["DDR4"], description: "King of budget builds, very common in PH" },
             { name: "Ryzen 5 7600", socket: "AM5", generation: "7000", tier: "balanced", ramType: ["DDR5"], description: "Great midrange for AM5 platform" },
             { name: "Ryzen 7 5700X", socket: "AM4", generation: "5000", tier: "balanced", ramType: ["DDR4"], description: "8-core balanced performance" },
