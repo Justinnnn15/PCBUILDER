@@ -56,7 +56,7 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #333333 100%);
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
     position: relative;
     overflow: hidden;
 }
@@ -64,30 +64,81 @@ body {
 .landing::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: -100%;
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100%;
+    height: 400%;
     background-image: 
-        linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px);
-    background-size: 50px 50px;
-    opacity: 0.3;
-    animation: gridMove 20s linear infinite;
+        radial-gradient(3px 3px at 20% 30%, rgba(0,255,255,1), transparent),
+        radial-gradient(2px 2px at 60% 10%, rgba(0,255,255,0.8), transparent),
+        radial-gradient(3px 3px at 50% 90%, rgba(255,255,255,1), transparent),
+        radial-gradient(2px 2px at 80% 50%, rgba(255,255,255,0.9), transparent),
+        radial-gradient(4px 4px at 90% 20%, rgba(0,200,255,1), transparent),
+        radial-gradient(2px 2px at 33% 70%, rgba(255,255,255,1), transparent),
+        radial-gradient(3px 3px at 15% 15%, rgba(255,255,255,0.9), transparent),
+        radial-gradient(2px 2px at 40% 60%, rgba(255,255,255,0.8), transparent),
+        radial-gradient(4px 4px at 70% 80%, rgba(0,200,255,1), transparent),
+        radial-gradient(3px 3px at 25% 40%, rgba(255,255,255,1), transparent),
+        radial-gradient(2px 2px at 85% 65%, rgba(0,255,255,0.8), transparent),
+        radial-gradient(3px 3px at 45% 25%, rgba(255,255,255,1), transparent),
+        radial-gradient(2px 2px at 10% 55%, rgba(0,255,255,0.7), transparent),
+        radial-gradient(4px 4px at 95% 85%, rgba(255,255,255,1), transparent),
+        radial-gradient(2px 2px at 55% 5%, rgba(0,200,255,0.8), transparent),
+        radial-gradient(3px 3px at 30% 95%, rgba(255,255,255,0.9), transparent);
+    background-size: 
+        200% 200%,
+        150% 150%,
+        180% 180%,
+        160% 160%,
+        200% 200%,
+        170% 170%,
+        190% 190%,
+        150% 150%,
+        200% 200%,
+        180% 180%,
+        160% 160%,
+        190% 190%,
+        170% 170%,
+        200% 200%,
+        150% 150%,
+        180% 180%;
+    background-position: 
+        0% 0%,
+        0% 20%,
+        0% 40%,
+        0% 10%,
+        0% 60%,
+        0% 30%,
+        0% 80%,
+        0% 50%,
+        0% 70%,
+        0% 15%,
+        0% 90%,
+        0% 35%,
+        0% 55%,
+        0% 75%,
+        0% 25%,
+        0% 95%;
+    animation: starfield 40s linear infinite;
     z-index: 1;
 }
 
 .landing::after {
     content: '';
     position: absolute;
-    top: 20%;
-    left: 10%;
-    width: 200px;
-    height: 200px;
-    border: 2px solid rgba(0,255,255,0.2);
-    border-radius: 50%;
-    animation: pulse 3s ease-in-out infinite;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(90deg, transparent 0%, rgba(0,255,255,0.05) 50%, transparent 100%),
+        linear-gradient(0deg, transparent 0%, rgba(0,255,255,0.05) 50%, transparent 100%);
+    background-size: 100px 100px;
+    animation: gridPulse 8s ease-in-out infinite;
     z-index: 1;
+    pointer-events: none;
 }
 
 @keyframes gridMove {
@@ -98,6 +149,23 @@ body {
 @keyframes pulse {
     0%, 100% { opacity: 0.2; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+@keyframes starfield {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-75%);
+    }
+}@keyframes gridPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes circuitFlow {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
 }
 
 .landing > * {
@@ -147,8 +215,32 @@ body {
 .pc-build {
     min-height: 100vh;
     padding: 6rem 2rem 4rem;
-    background-color: #111111;
+    background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
     position: relative;
+    overflow: hidden;
+}
+
+.pc-build::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.03) 2px, rgba(0,255,255,0.03) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,255,255,0.03) 2px, rgba(0,255,255,0.03) 4px),
+        radial-gradient(circle at 20% 80%, rgba(0,100,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0,255,200,0.1) 0%, transparent 50%);
+    background-size: 50px 50px, 50px 50px, 100% 100%, 100% 100%;
+    animation: circuitFlow 30s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.pc-build > * {
+    position: relative;
+    z-index: 1;
 }
 
 .pc-build h2 {
@@ -412,31 +504,215 @@ body {
 }
 
 .build-status {
-    max-width: 800px;
-    margin: 2rem auto 0;
-    padding: 1.5rem;
-    border-radius: 8px;
-    text-align: center;
-    font-size: 1.1rem;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    border: 2px solid #333333;
-    background-color: #1a1a1a;
-    color: #666666;
+    display: none;
 }
 
 .build-status.compatible {
-    border-color: #22c55e;
-    background-color: rgba(34,197,94,0.1);
-    color: #22c55e;
-    box-shadow: 0 0 15px rgba(34,197,94,0.3);
+    display: none;
 }
 
 .build-status.incompatible {
-    border-color: #ef4444;
-    background-color: rgba(239,68,68,0.1);
-    color: #ef4444;
-    box-shadow: 0 0 15px rgba(239,68,68,0.3);
+    display: none;
+}
+
+/* Success Build Modal */
+.success-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: linear-gradient(135deg, #1a4d2e 0%, #2d5a3d 100%);
+    border: 3px solid #22c55e;
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    max-width: 500px;
+    width: 90%;
+    z-index: 3001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 20px 60px rgba(34, 197, 94, 0.4), 0 0 100px rgba(34, 197, 94, 0.2);
+    text-align: center;
+}
+
+.success-modal.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.success-modal-icon {
+    font-size: 5rem;
+    color: #22c55e;
+    margin-bottom: 1rem;
+    animation: successPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes successPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.success-modal h2 {
+    color: #22c55e;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+}
+
+.success-modal p {
+    color: #cccccc;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.success-modal-close {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #ffffff;
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);
+}
+
+.success-modal-close:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.5);
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+
+.success-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.success-modal-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border: 2px solid #00ffff;
+    border-radius: 12px;
+    padding: 2.5rem;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 255, 255, 0.3);
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal-content {
+    transform: scale(1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    color: #00ffff;
+    font-size: 2rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background-color: rgba(0, 255, 255, 0.1);
+    transform: rotate(90deg);
+}
+
+#modal-title {
+    color: #00ffff;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+#modal-body {
+    color: #cccccc;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+#modal-body p {
+    margin-bottom: 1rem;
+}
+
+#modal-body a {
+    color: #00ffff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    margin: 0.5rem 0.5rem 0.5rem 0;
+    background-color: rgba(0, 255, 255, 0.1);
+    border: 1px solid #00ffff;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+#modal-body a:hover {
+    background-color: rgba(0, 255, 255, 0.2);
+    transform: translateX(5px);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+.contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
 @media (max-width: 768px) {
