@@ -1387,7 +1387,7 @@ function showSuccessModal() {
         modal.innerHTML = `
             <div class="success-modal-icon">✓</div>
             <h2>Perfect Build!</h2>
-            <p>All components are fully compatible and optimized.<br>This build will work flawlessly!<br><br><strong>Ready to proceed with your purchase.</strong></p>
+            <p>All components are fully compatible and optimized.<br>This build will work flawlessly!<br><br><strong>You're all set to build this PC!</strong></p>
             <button class="success-modal-close" onclick="hideSuccessModal()">Got It!</button>
         `;
         document.body.appendChild(modal);
