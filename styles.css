@@ -521,17 +521,19 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.8);
-    background: linear-gradient(135deg, #1a4d2e 0%, #2d5a3d 100%);
-    border: 3px solid #22c55e;
+    background: linear-gradient(135deg, #1a3d2e 0%, #1e3a2f 100%);
+    border: 2px solid #22c55e;
     border-radius: 16px;
-    padding: 3rem 2.5rem;
-    max-width: 500px;
-    width: 90%;
+    padding: 2rem 2rem;
+    max-width: 650px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
     z-index: 3001;
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    box-shadow: 0 20px 60px rgba(34, 197, 94, 0.4), 0 0 100px rgba(34, 197, 94, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     text-align: center;
 }
 
@@ -542,37 +544,134 @@ body {
 }
 
 .success-modal-icon {
-    font-size: 5rem;
+    font-size: 3.5rem;
     color: #22c55e;
-    margin-bottom: 1rem;
-    animation: successPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes successPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    margin-bottom: 0.5rem;
 }
 
 .success-modal h2 {
     color: #22c55e;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    text-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
 }
 
 .success-modal p {
-    color: #cccccc;
+    color: #aaaaaa;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+/* Build List Container */
+.build-list-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.build-list-container h3 {
+    color: #00ffff;
     font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 2rem;
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+.build-list {
+    text-align: left;
+}
+
+.build-item {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    margin: 0.4rem 0;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    border-left: 3px solid #00ffff;
+    font-size: 0.85rem;
+}
+
+.build-label {
+    color: #00ffff;
+    font-weight: bold;
+    min-width: 90px;
+    flex-shrink: 0;
+}
+
+.build-value {
+    color: #ffffff;
+    flex: 1;
+    margin: 0 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.build-price {
+    color: #22c55e;
+    font-size: 0.75rem;
+    text-align: right;
+    min-width: 100px;
+    flex-shrink: 0;
+}
+
+/* Export Buttons */
+.export-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1.2rem 0;
+}
+
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border: 2px solid;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.export-btn .export-icon {
+    font-size: 1.2rem;
+}
+
+.export-png {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-color: #3b82f6;
+    color: #ffffff;
+}
+
+.export-png:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5);
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.export-pdf {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    border-color: #ef4444;
+    color: #ffffff;
+}
+
+.export-pdf:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(239, 68, 68, 0.5);
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
 }
 
 .success-modal-close {
     background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
     color: #ffffff;
     border: none;
-    padding: 1rem 2.5rem;
-    font-size: 1.1rem;
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
