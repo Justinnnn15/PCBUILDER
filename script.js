@@ -1373,6 +1373,9 @@ function showSuccessModal() {
     let modal = document.getElementById('success-modal');
     let backdrop = document.getElementById('success-modal-backdrop');
     
+    // Get selected components for the build list
+    const buildList = generateBuildList();
+    
     if (!modal) {
         // Create backdrop
         backdrop = document.createElement('div');
@@ -1384,23 +1387,295 @@ function showSuccessModal() {
         modal = document.createElement('div');
         modal.id = 'success-modal';
         modal.className = 'success-modal';
-        modal.innerHTML = `
-            <div class="success-modal-icon">✓</div>
-            <h2>Perfect Build!</h2>
-            <p>All components are fully compatible and optimized.<br>This build will work flawlessly!<br><br><strong>You're all set to build this PC!</strong></p>
-            <button class="success-modal-close" onclick="hideSuccessModal()">Got It!</button>
-        `;
         document.body.appendChild(modal);
         
         // Close on backdrop click
         backdrop.addEventListener('click', hideSuccessModal);
     }
     
+    // Update modal content with build list
+    modal.innerHTML = `
+        <div class="success-modal-icon">✓</div>
+        <h2>Perfect Build!</h2>
+        <p>All components are fully compatible and optimized.<br>This build will work flawlessly!</p>
+        
+        <div class="build-list-container" id="build-list-container">
+            <h3>Your Build Summary</h3>
+            <div class="build-list" id="build-list">
+                ${buildList}
+            </div>
+        </div>
+        
+        <div class="export-buttons">
+            <button class="export-btn export-png" onclick="exportAsPNG()">
+                <span class="export-icon">🖼️</span>
+                Export as PNG
+            </button>
+            <button class="export-btn export-pdf" onclick="exportAsPDF()">
+                <span class="export-icon">📄</span>
+                Export as PDF
+            </button>
+        </div>
+        
+        <button class="success-modal-close" onclick="hideSuccessModal()">Got It!</button>
+    `;
+    
     // Show modal with animation
     setTimeout(() => {
         backdrop.classList.add('show');
         modal.classList.add('show');
     }, 100);
+}
+
+function generateBuildList() {
+    const cpu = cpuDropdown.value;
+    const motherboard = motherboardDropdown.value;
+    const gpu = gpuDropdown.value;
+    const ram = ramDropdown.value;
+    const storage = storageDropdown.value;
+    const psu = psuDropdown.value;
+    const pcCase = caseDropdown.value;
+    
+    // Get price info
+    const cpuData = getCPUData(cpu);
+    const mbData = getMotherboardData(motherboard);
+    const gpuInfo = gpuData[gpu];
+    const ramInfo = ramData[ram];
+    const storageInfo = storageData[storage];
+    const psuInfo = psuData[psu];
+    const caseInfo = caseData[pcCase];
+    
+    return `
+        <div class="build-item"><span class="build-label">CPU:</span> <span class="build-value">${cpu}</span> <span class="build-price">${cpuData?.price || ''}</span></div>
+        <div class="build-item"><span class="build-label">Motherboard:</span> <span class="build-value">${motherboard}</span> <span class="build-price">${mbData?.price || ''}</span></div>
+        <div class="build-item"><span class="build-label">GPU:</span> <span class="build-value">${gpu}</span> <span class="build-price">${gpuInfo?.price || ''}</span></div>
+        <div class="build-item"><span class="build-label">RAM:</span> <span class="build-value">${ram}</span> <span class="build-price">${ramInfo?.price || ''}</span></div>
+        <div class="build-item"><span class="build-label">Storage:</span> <span class="build-value">${storage}</span> <span class="build-price">${storageInfo?.price || ''}</span></div>
+        <div class="build-item"><span class="build-label">PSU:</span> <span class="build-value">${psu}</span> <span class="build-price">${psuInfo?.price || ''}</span></div>
+        <div class="build-item"><span class="build-label">Case:</span> <span class="build-value">${pcCase}</span> <span class="build-price">${caseInfo?.price || ''}</span></div>
+    `;
+}
+
+function exportAsPNG() {
+    const buildListContainer = document.getElementById('build-list-container');
+    
+    // Create a canvas from the build list
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size
+    canvas.width = 800;
+    canvas.height = 600;
+    
+    // Draw background
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a4d2e');
+    gradient.addColorStop(1, '#0a0a0a');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw border
+    ctx.strokeStyle = '#22c55e';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+    
+    // Draw title
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 36px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('✓ Perfect Build!', canvas.width / 2, 80);
+    
+    // Draw subtitle
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '18px Arial';
+    ctx.fillText('JUSTinTECH PC Builder', canvas.width / 2, 115);
+    
+    // Draw build list
+    const components = [
+        { label: 'CPU', value: cpuDropdown.value },
+        { label: 'Motherboard', value: motherboardDropdown.value },
+        { label: 'GPU', value: gpuDropdown.value },
+        { label: 'RAM', value: ramDropdown.value },
+        { label: 'Storage', value: storageDropdown.value },
+        { label: 'PSU', value: psuDropdown.value },
+        { label: 'Case', value: caseDropdown.value }
+    ];
+    
+    ctx.textAlign = 'left';
+    let yPos = 170;
+    
+    components.forEach((comp, index) => {
+        // Label
+        ctx.fillStyle = '#00ffff';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText(comp.label + ':', 60, yPos);
+        
+        // Value
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '14px Arial';
+        const maxWidth = 650;
+        const text = comp.value.length > 60 ? comp.value.substring(0, 57) + '...' : comp.value;
+        ctx.fillText(text, 180, yPos);
+        
+        yPos += 50;
+    });
+    
+    // Draw footer
+    ctx.fillStyle = '#888888';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Generated by JUSTinTECH PC Builder • ' + new Date().toLocaleDateString(), canvas.width / 2, canvas.height - 40);
+    
+    // Download the image
+    const link = document.createElement('a');
+    link.download = 'JUSTinTECH-PC-Build.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    showToast('Build exported as PNG!', 'success');
+}
+
+function exportAsPDF() {
+    // Create a printable HTML content
+    const components = [
+        { label: 'CPU', value: cpuDropdown.value, price: getCPUData(cpuDropdown.value)?.price || '' },
+        { label: 'Motherboard', value: motherboardDropdown.value, price: getMotherboardData(motherboardDropdown.value)?.price || '' },
+        { label: 'GPU', value: gpuDropdown.value, price: gpuData[gpuDropdown.value]?.price || '' },
+        { label: 'RAM', value: ramDropdown.value, price: ramData[ramDropdown.value]?.price || '' },
+        { label: 'Storage', value: storageDropdown.value, price: storageData[storageDropdown.value]?.price || '' },
+        { label: 'PSU', value: psuDropdown.value, price: psuData[psuDropdown.value]?.price || '' },
+        { label: 'Case', value: caseDropdown.value, price: caseData[caseDropdown.value]?.price || '' }
+    ];
+    
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>JUSTinTECH PC Build</title>
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+                    font-family: 'Segoe UI', Arial, sans-serif; 
+                    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                    color: #ffffff;
+                    min-height: 100vh;
+                    padding: 40px;
+                }
+                .container {
+                    max-width: 700px;
+                    margin: 0 auto;
+                    background: linear-gradient(135deg, #1a4d2e 0%, #2d5a3d 100%);
+                    border: 3px solid #22c55e;
+                    border-radius: 16px;
+                    padding: 40px;
+                    box-shadow: 0 20px 60px rgba(34, 197, 94, 0.3);
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    border-bottom: 2px solid #22c55e;
+                    padding-bottom: 20px;
+                }
+                .checkmark {
+                    font-size: 60px;
+                    color: #22c55e;
+                }
+                h1 {
+                    color: #22c55e;
+                    font-size: 32px;
+                    margin: 10px 0;
+                }
+                .subtitle {
+                    color: #cccccc;
+                    font-size: 14px;
+                }
+                .build-title {
+                    color: #00ffff;
+                    font-size: 20px;
+                    margin: 20px 0 15px;
+                    text-align: center;
+                }
+                .component {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 12px 15px;
+                    margin: 8px 0;
+                    background: rgba(0, 0, 0, 0.3);
+                    border-radius: 8px;
+                    border-left: 4px solid #00ffff;
+                }
+                .component-label {
+                    color: #00ffff;
+                    font-weight: bold;
+                    min-width: 100px;
+                }
+                .component-value {
+                    color: #ffffff;
+                    flex: 1;
+                    margin: 0 15px;
+                    font-size: 13px;
+                }
+                .component-price {
+                    color: #22c55e;
+                    font-size: 12px;
+                    text-align: right;
+                    min-width: 120px;
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #444;
+                    color: #888;
+                    font-size: 12px;
+                }
+                @media print {
+                    body { 
+                        background: white !important; 
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="checkmark">✓</div>
+                    <h1>Perfect Build!</h1>
+                    <p class="subtitle">All components are fully compatible and optimized</p>
+                </div>
+                
+                <h2 class="build-title">Build Summary</h2>
+                
+                ${components.map(comp => `
+                    <div class="component">
+                        <span class="component-label">${comp.label}</span>
+                        <span class="component-value">${comp.value}</span>
+                        <span class="component-price">${comp.price}</span>
+                    </div>
+                `).join('')}
+                
+                <div class="footer">
+                    Generated by JUSTinTECH PC Builder • ${new Date().toLocaleDateString()}
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+    
+    // Open print dialog
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    
+    // Wait for content to load then print
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+    
+    showToast('Print dialog opened - Save as PDF!', 'success');
 }
 
 function hideSuccessModal() {
