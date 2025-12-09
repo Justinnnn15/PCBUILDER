@@ -1782,3 +1782,401 @@ function setupModalHandlers() {
         }
     });
 }
+
+// ============================================
+// INTERACTIVE PARTICLE NEURAL NETWORK SYSTEM
+// ============================================
+(function() {
+    const canvas = document.getElementById('particle-canvas');
+    if (!canvas) {
+        console.error('Canvas not found!');
+        return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight * 2;
+    let particles = [];
+    let mouse = { x: null, y: null, radius: 150 };
+    let scrollY = 0;
+    let animationId;
+    
+    // Set initial canvas size
+    canvas.width = width;
+    canvas.height = height;
+    
+    // Configuration
+    const config = {
+        particleCount: 100,
+        particleMinSize: 1.5,
+        particleMaxSize: 3.5,
+        connectionDistance: 120,
+        mouseConnectionDistance: 180,
+        speed: 0.8,
+        colors: {
+            particle: ['#00ffff', '#00d4ff', '#00aaff', '#0088ff', '#00ff88', '#ffffff'],
+            connection: 'rgba(0, 255, 255, ',
+            mouseConnection: 'rgba(0, 255, 136, ',
+            background: '#030508'
+        }
+    };
+    
+    // Particle class
+    class Particle {
+        constructor() {
+            this.init();
+        }
+        
+        init() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.size = Math.random() * (config.particleMaxSize - config.particleMinSize) + config.particleMinSize;
+            this.baseSize = this.size;
+            this.speedX = (Math.random() - 0.5) * config.speed * 2;
+            this.speedY = (Math.random() - 0.5) * config.speed * 2;
+            this.color = config.colors.particle[Math.floor(Math.random() * config.colors.particle.length)];
+            this.opacity = Math.random() * 0.5 + 0.5;
+            this.pulsePhase = Math.random() * Math.PI * 2;
+            this.pulseSpeed = Math.random() * 0.03 + 0.02;
+        }
+        
+        update() {
+            // Move particle
+            this.x += this.speedX;
+            this.y += this.speedY;
+            
+            // Pulse effect
+            this.pulsePhase += this.pulseSpeed;
+            this.size = this.baseSize + Math.sin(this.pulsePhase) * 0.8;
+            
+            // Wrap around screen
+            if (this.x < 0) this.x = width;
+            if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height;
+            if (this.y > height) this.y = 0;
+            
+            // Mouse interaction - repel particles
+            if (mouse.x !== null && mouse.y !== null) {
+                const dx = this.x - mouse.x;
+                const dy = this.y - mouse.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < mouse.radius) {
+                    const force = (mouse.radius - dist) / mouse.radius;
+                    const angle = Math.atan2(dy, dx);
+                    this.x += Math.cos(angle) * force * 3;
+                    this.y += Math.sin(angle) * force * 3;
+                }
+            }
+        }
+        
+        draw() {
+            // Main particle
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.opacity;
+            ctx.fill();
+            
+            // Glow effect
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+            const gradient = ctx.createRadialGradient(
+                this.x, this.y, 0,
+                this.x, this.y, this.size * 2.5
+            );
+            gradient.addColorStop(0, this.color);
+            gradient.addColorStop(1, 'transparent');
+            ctx.globalAlpha = this.opacity * 0.3;
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            ctx.globalAlpha = 1;
+        }
+    }
+    
+    // Initialize canvas
+    function resize() {
+        width = window.innerWidth;
+        height = Math.max(document.body.scrollHeight, window.innerHeight * 2);
+        canvas.width = width;
+        canvas.height = height;
+    }
+    
+    // Initialize particles
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < config.particleCount; i++) {
+            particles.push(new Particle());
+        }
+    }
+    
+    // Draw connections between particles
+    function drawConnections() {
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < config.connectionDistance) {
+                    const opacity = (1 - dist / config.connectionDistance) * 0.3;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = config.colors.connection + opacity + ')';
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+            
+            // Mouse connections
+            if (mouse.x !== null && mouse.y !== null) {
+                const dx = particles[i].x - mouse.x;
+                const dy = particles[i].y - mouse.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < config.mouseConnectionDistance) {
+                    const opacity = (1 - dist / config.mouseConnectionDistance) * 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(mouse.x, mouse.y);
+                    ctx.strokeStyle = config.colors.mouseConnection + opacity + ')';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+    
+    // Draw floating orbs/nebula effect
+    function drawAmbientOrbs() {
+        const time = Date.now() * 0.0003;
+        
+        // Large ambient orbs - more visible
+        const orbs = [
+            { x: width * 0.15, y: height * 0.1, radius: 400, color: [0, 100, 255, 0.08] },
+            { x: width * 0.85, y: height * 0.25, radius: 350, color: [0, 255, 200, 0.06] },
+            { x: width * 0.5, y: height * 0.5, radius: 500, color: [0, 150, 255, 0.05] },
+            { x: width * 0.2, y: height * 0.75, radius: 380, color: [0, 255, 255, 0.06] },
+            { x: width * 0.8, y: height * 0.85, radius: 420, color: [80, 0, 255, 0.05] }
+        ];
+        
+        orbs.forEach((orb, index) => {
+            const offsetX = Math.sin(time + index * 1.5) * 80;
+            const offsetY = Math.cos(time + index) * 60;
+            
+            const gradient = ctx.createRadialGradient(
+                orb.x + offsetX, orb.y + offsetY, 0,
+                orb.x + offsetX, orb.y + offsetY, orb.radius
+            );
+            gradient.addColorStop(0, `rgba(${orb.color[0]}, ${orb.color[1]}, ${orb.color[2]}, ${orb.color[3]})`);
+            gradient.addColorStop(0.5, `rgba(${orb.color[0]}, ${orb.color[1]}, ${orb.color[2]}, ${orb.color[3] * 0.3})`);
+            gradient.addColorStop(1, 'transparent');
+            
+            ctx.beginPath();
+            ctx.arc(orb.x + offsetX, orb.y + offsetY, orb.radius, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+        });
+    }
+    
+    // Shooting stars
+    let shootingStars = [];
+    
+    function createShootingStar() {
+        if (Math.random() > 0.992 && shootingStars.length < 3) {
+            shootingStars.push({
+                x: Math.random() * width,
+                y: Math.random() * height * 0.4,
+                length: Math.random() * 100 + 50,
+                speed: Math.random() * 18 + 12,
+                angle: Math.PI * 0.25 + Math.random() * 0.3,
+                opacity: 1
+            });
+        }
+    }
+    
+    function updateShootingStars() {
+        shootingStars = shootingStars.filter(star => {
+            star.x += Math.cos(star.angle) * star.speed;
+            star.y += Math.sin(star.angle) * star.speed;
+            star.opacity -= 0.015;
+            
+            if (star.opacity > 0) {
+                const gradient = ctx.createLinearGradient(
+                    star.x, star.y,
+                    star.x - Math.cos(star.angle) * star.length,
+                    star.y - Math.sin(star.angle) * star.length
+                );
+                gradient.addColorStop(0, `rgba(255, 255, 255, ${star.opacity})`);
+                gradient.addColorStop(0.2, `rgba(0, 255, 255, ${star.opacity * 0.7})`);
+                gradient.addColorStop(1, 'transparent');
+                
+                ctx.beginPath();
+                ctx.moveTo(star.x, star.y);
+                ctx.lineTo(
+                    star.x - Math.cos(star.angle) * star.length,
+                    star.y - Math.sin(star.angle) * star.length
+                );
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Bright head
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                ctx.fill();
+                
+                return true;
+            }
+            return false;
+        });
+    }
+    
+    // Click burst effect
+    let clickBursts = [];
+    
+    function createClickBurst(x, y) {
+        const burstParticles = [];
+        for (let i = 0; i < 15; i++) {
+            const angle = (Math.PI * 2 / 15) * i;
+            burstParticles.push({
+                x: x, y: y,
+                vx: Math.cos(angle) * (4 + Math.random() * 4),
+                vy: Math.sin(angle) * (4 + Math.random() * 4),
+                size: 2 + Math.random() * 2,
+                opacity: 1,
+                color: config.colors.particle[Math.floor(Math.random() * config.colors.particle.length)]
+            });
+        }
+        clickBursts.push({ particles: burstParticles, ring: { radius: 0, opacity: 0.8 }, x, y });
+    }
+    
+    function updateClickBursts() {
+        clickBursts = clickBursts.filter(burst => {
+            let active = false;
+            burst.ring.radius += 10;
+            burst.ring.opacity -= 0.04;
+            
+            if (burst.ring.opacity > 0) {
+                ctx.beginPath();
+                ctx.arc(burst.x, burst.y, burst.ring.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(0, 255, 255, ${burst.ring.opacity})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                active = true;
+            }
+            
+            burst.particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                p.vx *= 0.95; p.vy *= 0.95;
+                p.opacity -= 0.025;
+                if (p.opacity > 0) {
+                    active = true;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * p.opacity, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                }
+            });
+            return active;
+        });
+    }
+
+    // Main animation loop
+    function animate() {
+        // Clear canvas
+        ctx.fillStyle = config.colors.background;
+        ctx.fillRect(0, 0, width, height);
+        
+        // Draw ambient orbs (background glow)
+        drawAmbientOrbs();
+        
+        // Update particles
+        particles.forEach(p => p.update());
+        
+        // Draw connections
+        drawConnections();
+        
+        // Draw particles
+        particles.forEach(p => p.draw());
+        
+        // Click effects
+        updateClickBursts();
+        
+        // Shooting stars
+        createShootingStar();
+        updateShootingStars();
+        
+        requestAnimationFrame(animate);
+    }
+    
+    // Event listeners
+    window.addEventListener('resize', () => {
+        resize();
+    });
+    
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY + window.scrollY;
+    });
+    
+    window.addEventListener('mouseout', () => {
+        mouse.x = null;
+        mouse.y = null;
+    });
+    
+    window.addEventListener('scroll', () => {
+        scrollY = window.scrollY;
+        const newHeight = Math.max(document.body.scrollHeight, window.innerHeight * 2);
+        if (canvas.height < newHeight) {
+            canvas.height = newHeight;
+            height = newHeight;
+        }
+    });
+    
+    // Click burst
+    canvas.style.pointerEvents = 'auto';
+    canvas.addEventListener('click', (e) => {
+        createClickBurst(e.clientX, e.clientY + window.scrollY);
+    });
+    
+    // Touch support
+    window.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY + window.scrollY;
+        }
+    });
+    
+    window.addEventListener('touchend', () => {
+        mouse.x = null;
+        mouse.y = null;
+    });
+    
+    // Touch click burst
+    canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) {
+            createClickBurst(e.touches[0].clientX, e.touches[0].clientY + window.scrollY);
+        }
+    });
+    
+    // Initialize everything
+    initParticles();
+    animate();
+    
+    // Recalculate after DOM loaded
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            resize();
+            // Reinit particles with correct dimensions
+            particles.forEach(p => p.init());
+        }, 100);
+    });
+    
+    console.log('Particle system initialized with', particles.length, 'particles');
+})();
